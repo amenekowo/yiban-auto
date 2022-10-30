@@ -1,5 +1,5 @@
 # yiban-auto
-csust yiban School based automatic health punch in.
+syuct yiban School based automatic health punch in.
 
 ## Content
 - [Disclamier](#Disclamier)

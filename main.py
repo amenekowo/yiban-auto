@@ -22,18 +22,20 @@ def main_handler(data=None, extend=None):
     for data in json_datas:
         success_flag = False
         max_run_count = 10 # 最大运行次数
+        day_section_matrix = ['早','午','晚']
         while success_flag == False and max_run_count > 0:
             success_flag = True
             nickname = data['UserInfo']['NickName']
             # Time converted to UTC/GMT+08:00
             today = datetime.datetime.today() + datetime.timedelta(hours=8-int(time.strftime('%z')[0:3]))
-            msg = f"%d-%02d-%02d %02d:%02d {nickname}|yiban punch：" % (today.year, today.month, today.day, today.hour, today.minute)
+            msg = f"%d-%02d-%02d %02d:%02d 用户：{nickname} | Yiban Punch：" % (today.year, today.month, today.day, today.hour, today.minute)
             form_info = data['FormInfo']
-            task_title = f'{today.month}月{today.day}日体温检测'
             try:
-                yiban = Yiban(data['UserInfo']['Mobile'], data['UserInfo']['Password'], task_title, today)
-                yiban.submit_task(form_info)
-                msg = f'{msg}Success.'
+                for day_section in range (0,3):
+                    task_title = f'{today.year}-{today.month}-{today.day}学生健康监测情况（{day_section_matrix[day_section]}）'
+                    yiban = Yiban(data['UserInfo']['Mobile'], data['UserInfo']['Password'], task_title, today)
+                    yiban.submit_task(form_info)
+                    msg = f'{msg}{day_section_matrix[day_section]}提交成功。 '
             # If an error occurs due to network problems, the program will continue to run
             except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as e:
                 success_flag = False

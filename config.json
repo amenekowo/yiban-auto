@@ -2,53 +2,33 @@
     "Forms": [
         {
             "UserInfo": {
-                "NickName": "nickname",
-                "Mobile": "mobile",
-                "Password": "password"
+                "NickName": "日志中显示的昵称",
+                "Mobile": "登录用的电话号码",
+                "Password": "密码"
             },
             "FormInfo": {
                 "AddressInfo1": {
-                    "location1": "location1",
-                    "location2": "location2",
-                    "location3": "location3"
+                    "location1": "位置选择（省），暂时不需要",
+                    "location2": "位置选择（市），暂时不需要",
+                    "location3": "位置选择（县），暂时不需要"
                 },
                 "AddressInfo2": {
-                    "name": "name",
-                    "location": "longitude,latitude",
-                    "address": "address"
-                }
-            }
-        },
-        {
-            "UserInfo": {
-                "NickName": "nickname",
-                "Mobile": "mobile",
-                "Password": "password"
-            },
-            "FormInfo": {
-                "AddressInfo1": {
-                    "location1": "location1",
-                    "location2": "location2",
-                    "location3": "location3"
-                },
-                "AddressInfo2": {
-                    "name": "name",
-                    "location": "longitude,latitude",
-                    "address": "address"
+                    "longitude": "定位经度（请使用getaddress获取或自己填写）",
+                    "latitude": "定位纬度（请使用getaddress获取或自己填写）",
+                    "address": "定位显示文字"
                 }
             }
         }
     ],
     "address": {
-        "mobile": "mobile",
-        "password": "password",
-        "month": "8",
-        "day": "31"
+        "mobile": "登录用的电话号码",
+        "password": "密码",
+        "task_title": "请求的任务标题"
     },
     "EmailInfo": {
-        "displayName": "displayname",
-        "senderEmail": "senderemail",
-        "password": "password"
+        "displayName": "显示名称",
+        "senderEmail": "发信人信箱（请使用QQ邮箱并开启SMTP）",
+        "password": "密码，请使用生成的授权码"
     },
     "ToList": {
         "Rekord": "receiveremail"

@@ -1,5 +1,5 @@
 # yiban-auto
-csust易班校本化自动健康打卡.【[English](README_en.md)】
+syuct易班校本化自动健康打卡，修改自[Crazyokd/yiban-auto](https://github.com/Crazyokd/yiban-auto)。【[English](README_en.md)】
 
 ## 目录
 - [免责声明](#免责声明)
@@ -24,11 +24,12 @@ pip install -r requirements.txt
 ```
 ### 2. 填写信息
 - 1. 编辑[config.json](config.json)文件
+  
 - 2. 运行下面的程序从而得到您详细的地址信息。 
     ```python
     python getaddress.py
     ```
-    
+  
 ### 3. 运行程序
 ```python
 python main.py
@@ -38,11 +39,15 @@ python main.py
 - 1. 编辑[main.yml](.github/workflows/main.yml)文件并去掉第五行和和第六行的注释。
 - 2. 编辑第六行的 **`- cron`**，选择一个适当的定时时间。
     > 关于`cron`的含义和用法可参考[https://jasonet.co/posts/scheduled-actions/](https://jasonet.co/posts/scheduled-actions/)
+  
+  **温馨提示：请使用私有Repo哦，注意信息安全（**
 
 ### 5. 自定义表单
 - 调用[main.py](main.py)文件中的`analyse_form()`方法，从而得到自己特定的表单提交规范
+  
     > 请仔细查看`analyse_form()`方法的实现。
 - 更改[yiban.py](yiban.py)文件中的`auto_fill_form`方法，并相应的修改[配置文件](config.json)
+  
     > 真的很简单！
 > **自定义表单成功的案例欢迎pr！**
 

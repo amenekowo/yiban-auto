@@ -3,6 +3,9 @@
 # @Author: Rekord
 # @Date: 2022-02-01
 
+#
+
+
 import re
 import time
 import json
@@ -32,7 +35,7 @@ class Yiban():
             ZRsH+P3+NNOZOEwUdjJUAx8CAwEAAQ==
             -----END PUBLIC KEY-----
             '''
-    CSRF = '000000' # Any
+    CSRF = '123456' # Any
     COOKIES = {"csrf_token": CSRF}  # 固定cookie 无需更改
     HEADERS = {"Origin": "https://c.uyiban.com", "User-Agent": "Yiban", "AppVersion": "5.0"}  # 固定头 无需更改    
               
@@ -73,7 +76,7 @@ class Yiban():
             )
         else:
             self.session.close()    # close session
-            raise Exception('Requests method error.')
+            raise Exception('请求方法错误。')
         return resp
 
 
@@ -88,10 +91,11 @@ class Yiban():
         )
         if resp.json()['code'] == 200:
             # get yiban_user_token
+            print (f'以 {self.mobile} 身份登录...')
             self.access_token = requests.utils.dict_from_cookiejar(resp.cookies)['yiban_user_token']
         else:
             self.session.close()    # close session
-            raise Exception(f'login fail, the mobile or password is wrong.')
+            raise Exception(f'登录失败，可能是用户名或密码有误。')
     
 
     def submit_task(self, form_info):
@@ -99,10 +103,11 @@ class Yiban():
         self.auth()
 
         # # 获取未完成任务列表
-        # print("uncompleted task list: ", self.getUncompletedList()['data'])
+            #print("----未完成任务列表: ", self.getUncompletedList()['data'])
+            #print('\n')
         # # 获取已完成任务列表
-        # print("completed task list: ", self.getCompletedList())
-        
+            #print("----已完成任务列表: ", self.getCompletedList())
+            #print('\n')
         self.auto_fill_form(self.getUncompletedList(), form_info)
 
 
@@ -146,7 +151,7 @@ class Yiban():
         if resp['data'] is None:
             self.re_auth()
             self.session.close()    # close session
-            raise requests.exceptions.ConnectionError("auth expired, please try again.")
+            raise requests.exceptions.ConnectionError("登录过期，请重试。")
         
         return resp
         
@@ -164,49 +169,65 @@ class Yiban():
         if resp['data'] is None:
             self.re_auth()
             self.session.close()    # close session
-            raise requests.exceptions.ConnectionError("auth expired, please try again.")
+            raise requests.exceptions.ConnectionError("登录过期，请重试。")
 
         return resp
 
 
     def auto_fill_form(self, resp, form_info):
+        today = datetime.datetime.today()
         # traverse task list
         for i in resp['data']:
             if i['Title'] == self.task_title:
+                print(f'填充表格 {i["Title"]} 中...')
                 task_detail = self.req(
                     url='https://api.uyiban.com/officeTask/client/index/detail', 
                     params={'TaskId': i['TaskId'], 'CSRF': self.CSRF}
                 ).json()['data']
 
                 # self.view_completed(task_detail['InitiateId'])
-                # print(task_detail)
+                #print(task_detail)
 
                 extend = {
                     "TaskId":  task_detail["Id"],
-                    "title": "任务信息",
+                    "title": "学生每日健康监测情况",
                     "content": [
                         {"label": "任务名称", "value": task_detail["Title"]},
                         {"label": "发布机构", "value": task_detail["PubOrgName"]},
-                        {"label": "发布人", "value": task_detail["PubPersonName"]}
+                        #{"label": "发布人", "value": task_detail["PubPersonName"]}
                     ]
                 }
+
                 data_form = {
-                    # 22.8.31 知晓并承诺
-                    "38df3554797feb3bee44085f97d12415": '是',
-                    # 22.8.31 是否到校
-                    "3997e429ef32611e7d0c6b8eabdaad7b": '是',
-                    # 22.8.31 体温
-                    "b201c112a5789abb8ffcb8eb2d83a2e3": str(round(random.uniform(35.2, 35.8), 1)),
-                    # 22.8.31 地图选址
-                    "babc320d498749758fb5f97521e40920": {
-                        "name": self.get_value_from_key(self.get_value_from_key(form_info, "AddressInfo2"), "name"),
-                        "location": self.get_value_from_key(self.get_value_from_key(form_info, "AddressInfo2"), "location"),
+                    # 22.10.30 学生类别
+                    "903b07c4d51b8ebcf14d9ed9398db569": '本科生',
+                    # 22.10.30 当前位置
+                    "5221be63e32078bdf1bd9206a0f152ae": {
+                        "time": f'{today.year}-{today.month}-{today.day} {today.hour}:{"{:02d}".format(today.minute)}',
+                        "longitude": self.get_value_from_key(self.get_value_from_key(form_info, "AddressInfo2"), "longitude"),
+                        "latitude": self.get_value_from_key(self.get_value_from_key(form_info, "AddressInfo2"), "latitude"),
                         "address": self.get_value_from_key(self.get_value_from_key(form_info, "AddressInfo2"), "address")
                     },
-                    # 22.8.31 健康码截图
-                    "9a6da1b5c2519032945d1048a60d75f9": self.get_picture("9a6da1b5c2519032945d1048a60d75f9"),
-                    # 22.8.31 行程码截图
-                    "9f87836748d6788550624c40a0409b93": self.get_picture("9f87836748d6788550624c40a0409b93"),
+                    # 22.10.30 体温
+                    "f23866960d58448a55c70fbef7f104f9": '35.90 ℃',
+                    # 22.10.30 是否有新冠肺炎相关症状
+                    "cbee0f084906800e80fc0a4304de97f9": '否',
+                    # 22.10.30 10天内是否有中、高、低风险地区旅居史
+                    "1afa3233899be3f371fbc6957465bd8b": '否',
+                    # 22.10.30 10天内是否曾接触过新冠病毒感染者或其密切接触者
+                    "b9087618b21106381cf08f021f5433fd": '否',
+                    # 22.10.30 你所在居住位置属于以下哪类区域
+                    "695fed783d1c83ee7d5126bffe7cdd38": '常态化地区',
+                    # 22.10.30 你现在属于以下哪种情况
+                    "859883030b77447963d8f06a93091da7": '校园内静态管理',
+                    # 22.10.30 是否校内人员
+                    "e944ebb08f9126111d1adb55d41c7140": '是，我在学校',
+                    # 22.10.30 今天是否做了核酸检测
+                    "7acc9b10550ca12649281fc77817b710": '是',
+                    # 22.10.30 本人确认上述情况属实
+                    "376ea41464235daa916087016af43975": '是'
+                    # 22.8.31 截图 保留
+                    #"id": self.get_picture("id")
                 }
 
                 submit_data = {}
@@ -225,7 +246,7 @@ class Yiban():
                 # Failed
                 if resp['code'] != 0:
                     self.session.close()    # close session
-                    raise Exception(f"punch failed.")
+                    raise Exception(f"提交失败。")
                 break
 
 
@@ -246,10 +267,10 @@ class Yiban():
                     url='https://api.uyiban.com/officeTask/client/index/detail', 
                     params={'TaskId': i['TaskId'], 'CSRF': self.CSRF}
                 ).json()['data']['InitiateId']
-                print(self.req(
-                    url=f'https://api.uyiban.com/workFlow/c/work/show/view/{InitiateId}',
-                    params={'CSRF': self.CSRF}
-                ).json()['data']['Initiate']['FormDataJson'])
+                #print ("请求到的JSON: "+str(self.req(
+                    #url=f'https://api.uyiban.com/workFlow/c/work/show/view/{InitiateId}',
+                    #params={'CSRF': self.CSRF}
+                #).json()['data']['Initiate']['FormDataJson']))
                 break
 
 
@@ -261,11 +282,11 @@ class Yiban():
 
 
     # get the pricture of assigned date, default yesterday
-    def get_picture(self, id, 
+    def get_picture(self, id, task_title,
         day = datetime.datetime.today() + datetime.timedelta(hours=8-int(time.strftime('%z')[0:3])) - datetime.timedelta(days=1)):
         # regenerate task title
-        task_title = f'{day.month}月{day.day}日体温检测'
-        # task_title = '每日健康打卡'
+        #task_title = f'{day.year}-{day.month}-{day.day}学生健康监测情况（午）'
+        print ("任务标题:" + task_title)
         try: 
             resp = self.getCompletedList()
             # traverse task list
@@ -284,12 +305,12 @@ class Yiban():
             return None
 
 
-    # 分析自定义表单，默认时间为“今天”，默认任务标题为“{day.month}月{day.day}日体温检测”
+    # 分析自定义表单，默认时间为“今天”，默认任务标题为“{today.year}-{today.month}-{today.day}学生健康监测情况（早）”
     def analyse(self, day = datetime.datetime.today() + datetime.timedelta(hours=8-int(time.strftime('%z')[0:3]))):
         # 校本化认证
         self.auth()
 
-        task_title = f'{day.month}月{day.day}日体温检测'
+        task_title = task_title = f'{today.year}-{today.month}-{today.day}学生健康监测情况（早）'
         resp = self.getCompletedList()
         # traverse task list
         for i in resp['data']:
@@ -299,6 +320,8 @@ class Yiban():
                     params={'TaskId': i['TaskId'], 'CSRF': self.CSRF}
                 ).json()['data']
 
-                # print(task_detail)
-                # print(self.view_completed(task_detail['InitiateId']))
+                print("task_detail:")
+                print(task_detail)
+                print("data:")
+                print(self.view_completed(task_detail['InitiateId']))
                 print(self.view_completed(task_detail['InitiateId'])['FormDataJson'])
