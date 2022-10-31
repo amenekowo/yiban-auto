@@ -32,7 +32,8 @@ def main_handler(data=None, extend=None):
             form_info = data['FormInfo']
             try:
                 for day_section in range (0,3):
-                    task_title = f'{today.year}-{today.month}-{today.day}学生健康监测情况（{day_section_matrix[day_section]}）'
+                    # Force 2 digits month&day
+                    task_title = f'%d-%02d-%02d学生健康监测情况（{day_section_matrix[day_section]}）' % (today.year, today.month, today.day)
                     yiban = Yiban(data['UserInfo']['Mobile'], data['UserInfo']['Password'], task_title, today)
                     yiban.submit_task(form_info)
                     msg = f'{msg}{day_section_matrix[day_section]}提交成功。 '

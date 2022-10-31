@@ -310,7 +310,7 @@ class Yiban():
         # 校本化认证
         self.auth()
 
-        task_title = task_title = f'{today.year}-{today.month}-{today.day}学生健康监测情况（早）'
+        task_title = f'%d-%02d-%02d学生健康监测情况（早）' % (today.year, today.month, today.day)
         resp = self.getCompletedList()
         # traverse task list
         for i in resp['data']:
