@@ -36,7 +36,7 @@ def main_handler(data=None, extend=None):
                     task_title = f'%d-%02d-%02d学生健康监测情况（{day_section_matrix[day_section]}）' % (today.year, today.month, today.day)
                     yiban = Yiban(data['UserInfo']['Mobile'], data['UserInfo']['Password'], task_title, today)
                     yiban.submit_task(form_info)
-                    msg = f'{msg}{day_section_matrix[day_section]}提交成功。 '
+                    msg = f'{msg}{day_section_matrix[day_section]}运行成功。 '
             # If an error occurs due to network problems, the program will continue to run
             except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as e:
                 success_flag = False
@@ -50,7 +50,7 @@ def main_handler(data=None, extend=None):
                 time.sleep(1)
     # print(total_msg)
     # send email
-    start_email(total_msg)
+    #start_email(total_msg)
 
 
 def analyse_form():

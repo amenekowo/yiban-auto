@@ -284,8 +284,9 @@ class Yiban():
     # get the pricture of assigned date, default yesterday
     def get_picture(self, id, task_title,
         day = datetime.datetime.today() + datetime.timedelta(hours=8-int(time.strftime('%z')[0:3])) - datetime.timedelta(days=1)):
-        # regenerate task title
-        #task_title = f'{day.year}-{day.month}-{day.day}学生健康监测情况（午）'
+        # if task_title is blank regenerate task title
+        if (len(task_title)==0):
+            task_title = f'%d-%02d-%02d学生健康监测情况（早）' % (day.year, day.month, day.day)
         print ("任务标题:" + task_title)
         try: 
             resp = self.getCompletedList()
@@ -310,7 +311,7 @@ class Yiban():
         # 校本化认证
         self.auth()
 
-        task_title = f'%d-%02d-%02d学生健康监测情况（早）' % (today.year, today.month, today.day)
+        task_title = f'%d-%02d-%02d学生健康监测情况（早）' % (day.year, day.month, day.day)
         resp = self.getCompletedList()
         # traverse task list
         for i in resp['data']:
