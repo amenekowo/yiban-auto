@@ -18,6 +18,25 @@
                     "address": "定位显示文字"
                 }
             }
+        },
+        {
+            "UserInfo": {
+                "NickName": "日志中显示的昵称2",
+                "Mobile": "登录用的电话号码2",
+                "Password": "密码2"
+            },
+            "FormInfo": {
+                "AddressInfo1": {
+                    "location1": "位置选择（省），暂时不需要",
+                    "location2": "位置选择（市），暂时不需要",
+                    "location3": "位置选择（县），暂时不需要"
+                },
+                "AddressInfo2": {
+                    "longitude": "定位经度（请使用getaddress获取或自己填写）",
+                    "latitude": "定位纬度（请使用getaddress获取或自己填写）",
+                    "address": "定位显示文字"
+                }
+            }
         }
     ],
     "address": {
