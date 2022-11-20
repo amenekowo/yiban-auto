@@ -245,11 +245,13 @@ class Yiban():
 
                 # Failed
                 if resp['code'] != 0:
-                    self.session.close()    # close session
-                    raise Exception(f"提交失败。")
+                    if resp['msg'] != "任务已结束，不能反馈!":
+                        self.session.close()    # close session
+                        raise Exception(f"提交时提交失败，错误信息：" + str(resp))
+                    else:
+                        print (f"任务" + i["Title"] + "已结束，不能反馈，已跳过。")
                 break
-
-
+                
     def view_completed(self, InitiateId):
         return self.req(
             url=f'https://api.uyiban.com/workFlow/c/work/show/view/{InitiateId}',
