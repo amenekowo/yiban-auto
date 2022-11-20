@@ -9,8 +9,6 @@ import datetime
 import json
 from yiban import Yiban
 import requests
-from sendemail import start_email
-
 
 def main_handler(data=None, extend=None):
     # load json datas
@@ -18,7 +16,12 @@ def main_handler(data=None, extend=None):
         json_datas = json.load(f)['Forms']
     # print(json_datas)
 
-    total_msg = ''
+    total_msg = ""
+    pushplus_token = ""
+    pushplus_title = ""
+    pushplus_msg = ""
+    pushplus_url = "http://www.pushplus.plus/send?token="+pushplus_token+"&title="+pushplus_title+"&content="+pushplus_msg+"&template=html"
+    
     for data in json_datas:
         success_flag = False
         max_run_count = 10 # 最大运行次数
@@ -43,15 +46,19 @@ def main_handler(data=None, extend=None):
                 max_run_count -= 1
             except Exception as e:
                 msg = f'{msg}{e}'
+                pushplus_title = "易班自动填写故障"
+                pushplus_msg = msg
+                requests.get(pushplus_url)
             finally:
                 if success_flag == True:                
                     print(msg)
                     total_msg = f'{total_msg}\n\n{msg}'
                 time.sleep(1)
     # print(total_msg)
-    # send email
-    #start_email(total_msg)
-
+    # send pushplus
+    pushplus_title = "易班自动填写运行日志"
+    pushplus_msg = total_msg
+    requests.get(pushplus_url)
 
 def analyse_form():
     info = {}
